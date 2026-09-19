@@ -94,6 +94,108 @@ ollama/qwen3.8:27b-mtp-q4_K_M
 
 For an unsuffixed model, the request is forwarded without a `reasoning_effort` override, preserving Ollama's default behavior.
 
+
+## Generate Qwen3.8 model entries from an existing OpenCode config
+
+If you already have one Qwen3.8 model entry in `opencode.json`, the repository includes a small Bun/TypeScript utility that creates four separate model entries for the proxy's reasoning levels:
+
+- `<base-model>-effort-none`
+- `<base-model>-effort-low`
+- `<base-model>-effort-medium`
+- `<base-model>-effort-xhigh`
+
+The script copies the original model configuration, changes the model ID, and gives each generated entry a descriptive name. If the source entry has an explicit `modelID`, that field is updated too, so OpenCode sends the suffixed ID to the proxy. OpenCode's provider model map uses these model IDs as selectable catalog entries. citeturn0search0turn0search3
+
+### Automatic detection
+
+If your provider contains exactly one unsuffixed Qwen3.8 model, the script can detect it automatically:
+
+```bash
+bun run generate:variants -- --input ~/.config/opencode/opencode.json
+```
+
+This creates:
+
+```
+~/.config/opencode/opencode.json.qwen-thinking.json
+```
+
+### Specify the model explicitly
+
+This is recommended if you have more than one Qwen3.8 model:
+
+```bash
+bun run generate:variants -- \
+  --input ~/.config/opencode/opencode.json \
+  --model qwen3.8:27b-mlx \
+  --output ~/opencode-qwen-thinking.json
+```
+
+You can also select a different provider:
+
+```bash
+bun run generate:variants -- \
+  --input ./opencode.json \
+  --provider ollama \
+  --model qwen3.8:27b-mlx
+```
+
+### Update the existing file in place
+
+Use `--in-place` when you want the four generated entries written directly into the original file:
+
+```bash
+bun run generate:variants -- \
+  --input ~/.config/opencode/opencode.json \
+  --model qwen3.8:27b-mlx \
+  --in-place
+```
+
+The script does not overwrite an existing generated variant unless `--force` is supplied:
+
+```bash
+bun run generate:variants -- \
+  --input ~/.config/opencode/opencode.json \
+  --model qwen3.8:27b-mlx \
+  --in-place \
+  --force
+```
+
+### Before and after
+
+Given this source entry:
+
+```json
+{
+  "provider": {
+    "ollama": {
+      "models": {
+        "qwen3.8:27b-mlx": {
+          "name": "Qwen3.8 27B MLX",
+          "options": {
+            "temperature": 1,
+            "num_ctx": 131072
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+the generated config contains the original entry plus four entries with the same settings:
+
+```text
+qwen3.8:27b-mlx-effort-none   -> No Thinking
+qwen3.8:27b-mlx-effort-low    -> Low Thinking
+qwen3.8:27b-mlx-effort-medium -> Medium Thinking
+qwen3.8:27b-mlx-effort-xhigh  -> Xhigh Thinking
+```
+
+The generated entries deliberately do not add a separate reasoning parameter. The proxy selects the reasoning level from the `-effort-<level>` suffix and converts it into Ollama's `reasoning_effort` request field.
+
+The utility currently accepts standard JSON files. If your config uses JSON comments or trailing commas, remove those first or save a JSON copy for the generator.
+
 ## Configuration
 
 Environment variables:
