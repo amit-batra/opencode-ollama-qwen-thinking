@@ -232,6 +232,56 @@ The generated entries deliberately do not add a separate reasoning parameter. Th
 
 The utility currently accepts standard JSON files. If your config uses JSON comments or trailing commas, remove those first or save a JSON copy for the generator.
 
+## Environment variables
+
+**None of these environment variables are mandatory.** The plugin and proxy have sensible defaults, so a normal installation requires no environment-variable configuration.
+
+You only need to define an environment variable when you want to override its default behavior:
+
+| Variable | Default | Mandatory? | Purpose |
+|---|---|---|---|
+| `OLLAMA_URL` | `http://127.0.0.1:11434` | **No** | URL of the Ollama server |
+| `QWEN_THINKING_PROXY_HOST` | `127.0.0.1` | **No** | Local address on which the proxy listens |
+| `QWEN_THINKING_PROXY_PORT` | `11437` | **No** | Local TCP port used by the proxy |
+| `QWEN_THINKING_DEBUG` | `0` | **No** | Set to `1` to log model/reasoning rewrites |
+| `QWEN_THINKING_DISABLE_PROXY` | `0` | **No** | Set to `1` to prevent the plugin from starting/configuring the proxy automatically |
+
+### Default installation
+
+For the normal setup — Ollama running on the same machine at its default port — **you do not need to define anything**. Simply install the plugin and start OpenCode.
+
+The effective defaults are:
+
+```text
+Ollama:       http://127.0.0.1:11434
+Proxy host:   127.0.0.1
+Proxy port:   11437
+Debug logging: disabled
+Auto-start:   enabled
+```
+
+### When would you override them?
+
+For example, if Ollama is running on another port:
+
+```bash
+OLLAMA_URL=http://127.0.0.1:11435 opencode
+```
+
+If you want the proxy on a different port:
+
+```bash
+QWEN_THINKING_PROXY_PORT=12437 opencode
+```
+
+If you want request-rewrite logging:
+
+```bash
+QWEN_THINKING_DEBUG=1 opencode
+```
+
+> **Note:** `QWEN_THINKING_DISABLE_PROXY=1` is an advanced option. With it enabled, the plugin deliberately does not start the proxy or redirect the Ollama provider to it, so the `-effort-*` model variants will not provide the reasoning-level translation described by this project.
+
 ## Configuration
 
 Environment variables:
