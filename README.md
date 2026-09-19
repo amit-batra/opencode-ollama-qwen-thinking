@@ -110,15 +110,42 @@ For the Qwen reasoning proxy, the important requirement is that the underlying Q
 
 ## Installation
 
-### From this repository
+### npm package (recommended)
 
-Clone it:
+Once published, the easiest installation is to add the package directly to your OpenCode configuration:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "opencode-ollama-qwen-thinking@0.1.0"
+  ]
+}
+```
+
+You do **not** need to clone the repository or run `npm install` manually. OpenCode installs npm plugins automatically using Bun and caches them locally. citeturn0search0turn0search2
+
+If you prefer to always use the latest published version, you can omit the version:
+
+```json
+{
+  "plugin": [
+    "opencode-ollama-qwen-thinking"
+  ]
+}
+```
+
+For reproducible setups, pinning a specific version is recommended.
+
+### From this repository (development)
+
+Clone the repository when you want to inspect, modify, or develop the plugin locally:
 
 ```bash
 git clone https://github.com/amit-batra/opencode-ollama-qwen-thinking.git
 ```
 
-Then add the plugin path to your OpenCode configuration:
+Then add the local repository path to your OpenCode configuration:
 
 ```json
 {
@@ -128,12 +155,6 @@ Then add the plugin path to your OpenCode configuration:
   ]
 }
 ```
-
-OpenCode supports global and project plugins. If you prefer a global installation, place the repository under `~/.config/opencode/plugins/` and configure it according to your OpenCode version.
-
-### npm package
-
-This repository is structured so it can later be published as an npm package. Until a package release is published, use the local repository path.
 
 ## Using the models
 
