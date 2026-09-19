@@ -4,6 +4,36 @@ An OpenCode plugin + local proxy that makes Qwen3.8 reasoning levels work transp
 
 OpenCode's Ollama integration uses the OpenAI-compatible `/v1/chat/completions` endpoint. OpenCode 1.18.x does not reliably forward arbitrary `reasoning_effort` request-body fields through the AI SDK. This project solves that at the HTTP boundary: the plugin starts a small localhost proxy and points the Ollama provider at it; the proxy rewrites Qwen3.8 model-name suffixes into Ollama's `reasoning_effort` field.
 
+## The problem this project solves
+
+Qwen3.8 supports different reasoning levels such as **none, low, medium, and xhigh**. Ollama's OpenAI-compatible API can express the desired level through the `reasoning_effort` request parameter.
+
+The problem is that when Qwen3.8 is used through **OpenCode → Ollama**, the reasoning-level parameter does not reliably make it all the way from OpenCode to Ollama. As a result, simply defining or selecting different reasoning levels in OpenCode may still produce the same effective reasoning behavior.
+
+This project works around that request-path limitation without requiring changes to OpenCode or Ollama:
+
+1. The plugin starts a small local HTTP proxy automatically.
+2. The proxy exposes reasoning-level variants of each Qwen3.8 model, using IDs such as `qwen3.8:27b-mlx-effort-medium`.
+3. When OpenCode requests one of those variants, the proxy converts the suffix into Ollama's `reasoning_effort` parameter.
+4. Ollama receives the original model ID plus the requested reasoning level.
+
+In short:
+
+```text
+OpenCode
+   |
+   | qwen3.8:27b-mlx-effort-medium
+   v
+Qwen Thinking Proxy
+   |
+   | model=qwen3.8:27b-mlx
+   | reasoning_effort=medium
+   v
+Ollama
+```
+
+The result is that the four reasoning levels can be exposed as ordinary selectable OpenCode models, while the actual reasoning-level translation happens at the HTTP boundary.
+
 ## Supported models
 
 The proxy is model-agnostic and will rewrite any Qwen3.8 model:
