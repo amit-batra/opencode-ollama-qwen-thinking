@@ -1,0 +1,26 @@
+{
+  "name": "opencode-ollama-qwen-thinking",
+  "version": "0.1.0",
+  "description": "OpenCode plugin and localhost proxy for Qwen3.8 reasoning levels through Ollama",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test",
+    "proxy": "bun run src/proxy.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@opencode-ai/plugin": "latest"
+  },
+  "engines": {
+    "bun": ">=1.1.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amit-batra/opencode-ollama-qwen-thinking.git"
+  }
+}
