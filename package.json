@@ -10,7 +10,8 @@
   "scripts": {
     "test": "bun test",
     "proxy": "bun run src/proxy.ts",
-    "generate:variants": "bun run scripts/generate-qwen-variants.ts"
+    "generate:variants": "bun run scripts/generate-qwen-variants.ts",
+    "prepublishOnly": "bun test"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -23,5 +24,26 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/amit-batra/opencode-ollama-qwen-thinking.git"
-  }
+  },
+  "files": [
+    "src",
+    "scripts",
+    "README.md",
+    "DEVELOP.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "ollama",
+    "qwen",
+    "qwen3.8",
+    "reasoning",
+    "llm",
+    "ai"
+  ],
+  "bugs": {
+    "url": "https://github.com/amit-batra/opencode-ollama-qwen-thinking/issues"
+  },
+  "homepage": "https://github.com/amit-batra/opencode-ollama-qwen-thinking"
 }
