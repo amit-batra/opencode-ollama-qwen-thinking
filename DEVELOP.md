@@ -7,7 +7,7 @@ This file contains maintainer/developer instructions that are intentionally kept
 - A GitHub account with write access to this repository.
 - An npm account with permission to publish the package.
 - Bun 1.1.0 or later.
-- Node.js/npm available if you prefer to use npm for authentication and publishing.
+- Node.js 22.14.0 or later.
 - Git.
 
 ## Local development
@@ -40,7 +40,7 @@ Build a local npm tarball without publishing it:
 npm pack --dry-run
 ```
 
-Review the file list carefully. The package should contain the plugin source, proxy, reasoning logic, generator, README, LICENSE, and this development guide.
+Review the file list carefully. The package should contain the plugin source, proxy, reasoning logic, generator, README, and LICENSE. It intentionally does **not** include this development guide.
 
 You can also create the actual tarball:
 
@@ -56,85 +56,73 @@ opencode-ollama-qwen-thinking-0.1.0.tgz
 
 Do not commit the generated `.tgz` file.
 
-## Publish the package
+## npm publishing
 
-### 1. Make sure the version is correct
+This repository uses **GitHub Actions Trusted Publishing** for normal releases. The workflow at `.github/workflows/publish.yml` publishes when a `v*` tag is pushed.
 
-Update the `version` field in `package.json`. npm does not allow re-publishing the same package version.
+Trusted Publishing uses GitHub's OIDC identity instead of storing a long-lived npm publish token in GitHub. npm requires Node.js 22.14.0+ and npm CLI 11.5.1+ for this flow.
 
-For example:
+### One-time bootstrap
 
-```bash
-npm version 0.1.0
-```
+There is an important npm constraint: a trusted publisher is configured on an npm package that already exists. Therefore, the very first `0.1.0` publication has to be bootstrapped separately.
 
-This creates a Git commit and tag when run in a clean Git repository.
+If you do not want to configure npm account 2FA, use a short-lived **granular access token with bypass 2FA** only for this first publication:
 
-### 2. Authenticate with npm
-
-If you are not already authenticated:
-
-```bash
-npm login
-```
-
-Verify the active account:
+1. On npmjs.com, create a granular access token with:
+   - **Packages and scopes:** Read and write (publish and stage).
+   - **Bypass two-factor authentication:** enabled.
+   - A short expiration.
+   - Access limited to this package if npm offers the package selector at token creation time.
+2. Use the token only for the initial publication. Do not commit it or add it to GitHub.
+3. From the repository root, publish `0.1.0`:
 
 ```bash
-npm whoami
+NPM_TOKEN="<token>" npm publish
 ```
 
-### 3. Check package metadata
+If npm prompts for authentication instead, configure the token through your local npm credentials rather than putting it in shell history.
 
-Before publishing:
+npm is currently deprecating direct publishing with bypass-2FA tokens; that path is expected to be removed in January 2027. It is therefore intended here only as a bootstrap mechanism.
+
+### Configure GitHub Actions as the trusted publisher
+
+After `0.1.0` exists on npm:
+
+1. Open the package's **Settings → Trusted publishing** on npmjs.com.
+2. Select **GitHub Actions**.
+3. Enter:
+   - **Organization or user:** `amit-batra`
+   - **Repository:** `opencode-ollama-qwen-thinking`
+   - **Workflow filename:** `publish.yml`
+   - **Environment:** leave empty.
+4. Allow **`npm publish`** for this trusted publisher.
+5. Save the configuration.
+
+The repository's `package.json` already has the required repository URL:
+
+```text
+https://github.com/amit-batra/opencode-ollama-qwen-thinking.git
+```
+
+npm requires that repository URL to match the GitHub repository used for trusted publishing.
+
+### Recommended npm package setting
+
+Once Trusted Publishing is configured and verified, go to the package's **Settings → Publishing access** and select:
+
+**Require two-factor authentication and disallow tokens**
+
+This prevents traditional npm tokens from being used to publish the package. GitHub Actions Trusted Publishing continues to work because it authenticates through OIDC.
+
+### Release a new version
+
+1. Make and test the changes:
 
 ```bash
-npm view opencode-ollama-qwen-thinking
+bun test
+npm pack --dry-run
 ```
 
-If the package name has not been published yet, this may report a 404. That is expected for the first publication.
-
-### 4. Publish
-
-For the first public release:
-
-```bash
-npm publish
-```
-
-Because this is an unscoped package, it is public by default.
-
-### 5. Verify the published package
-
-After npm accepts the publication:
-
-```bash
-npm view opencode-ollama-qwen-thinking version
-npm view opencode-ollama-qwen-thinking dist.tarball
-```
-
-Then verify that OpenCode can load the published package.
-
-## Install the published plugin in OpenCode
-
-The preferred user-facing installation is through OpenCode's npm plugin support:
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "opencode-ollama-qwen-thinking@0.1.0"
-  ]
-}
-```
-
-OpenCode installs npm plugins automatically using Bun. Users do not need to clone this repository or run `npm install` manually.
-
-For development against the local checkout, continue using the repository path described in the README.
-
-## Releasing a new version
-
-1. Make and test the changes.
 2. Update the version:
 
 ```bash
@@ -154,17 +142,35 @@ npm version major
 git push origin main --follow-tags
 ```
 
-4. Publish:
+4. GitHub Actions will run `.github/workflows/publish.yml` and publish the tagged version to npm using Trusted Publishing.
 
-```bash
-npm publish
-```
-
-5. Verify:
+5. Verify the release:
 
 ```bash
 npm view opencode-ollama-qwen-thinking version
+npm view opencode-ollama-qwen-thinking dist.tarball
 ```
+
+### Optional: manual/local publishing
+
+Manual `npm publish` is intentionally not part of the normal release process. After Trusted Publishing is configured with token publishing disabled, local direct publishing will require interactive npm 2FA.
+
+## Install the published plugin in OpenCode
+
+The preferred user-facing installation is through OpenCode's npm plugin support:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "opencode-ollama-qwen-thinking@0.1.0"
+  ]
+}
+```
+
+OpenCode installs npm plugins automatically using Bun. Users do not need to clone this repository or run `npm install` manually.
+
+For development against the local checkout, continue using the repository path described in the README.
 
 ## Important publishing notes
 
