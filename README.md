@@ -42,6 +42,42 @@ Ollama :11434
 
 The proxy is started automatically by the OpenCode plugin. No separate service manager is required.
 
+## Prerequisites
+
+Before installing the plugin, make sure the following are available on your machine:
+
+- **OpenCode 1.18.x or later** with plugin support.
+- **Ollama** installed and running locally.
+- An **Ollama-supported Qwen3.8 model**, such as `qwen3.8:27b-mlx` or a Qwen3.8 MTP variant.
+- **Bun 1.1.0 or later**. The plugin uses Bun to start the local proxy as a child process, and the configuration-generator script is also written for Bun.
+- **Git**, if installing directly from this GitHub repository.
+- A standard **JSON-formatted OpenCode configuration** if you plan to use the `generate:variants` utility. The generator does not currently parse JSONC comments or trailing commas.
+
+### Verify the prerequisites
+
+Check Bun:
+
+```bash
+bun --version
+```
+
+Check Ollama:
+
+```bash
+ollama --version
+ollama list
+```
+
+Check that Ollama's OpenAI-compatible endpoint is available:
+
+```bash
+curl http://127.0.0.1:11434/v1/models
+```
+
+You should see your installed models in the response.
+
+For the Qwen reasoning proxy, the important requirement is that the underlying Qwen3.8 model is available through Ollama. The plugin does not download or manage models itself.
+
 ## Installation
 
 ### From this repository
