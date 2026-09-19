@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "bun test",
-    "proxy": "bun run src/proxy.ts"
+    "proxy": "bun run src/proxy.ts",
+    "generate:variants": "bun run scripts/generate-qwen-variants.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
