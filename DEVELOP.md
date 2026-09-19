@@ -74,13 +74,17 @@ If you do not want to configure npm account 2FA, use a short-lived **granular ac
    - A short expiration.
    - Access limited to this package if npm offers the package selector at token creation time.
 2. Use the token only for the initial publication. Do not commit it or add it to GitHub.
-3. From the repository root, publish `0.1.0`:
+3. From the repository root, use the token through a temporary npm config file and publish `0.1.0`:
 
 ```bash
-NPM_TOKEN="<token>" npm publish
+export NPM_TOKEN="<token>"
+printf '//registry.npmjs.org/:_authToken=%s\\n' "$NPM_TOKEN" > .npmrc.bootstrap
+NPM_CONFIG_USERCONFIG="$PWD/.npmrc.bootstrap" npm publish
+rm -f .npmrc.bootstrap
+unset NPM_TOKEN
 ```
 
-If npm prompts for authentication instead, configure the token through your local npm credentials rather than putting it in shell history.
+This keeps the token out of your normal npm configuration. Do not commit `.npmrc.bootstrap`.
 
 npm is currently deprecating direct publishing with bypass-2FA tokens; that path is expected to be removed in January 2027. It is therefore intended here only as a bootstrap mechanism.
 
