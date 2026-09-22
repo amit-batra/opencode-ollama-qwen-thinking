@@ -1,6 +1,6 @@
 {
   "name": "opencode-ollama-qwen-thinking",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "OpenCode plugin and localhost proxy for Qwen3.8 reasoning levels through Ollama",
   "type": "module",
   "main": "./src/index.ts",
