@@ -150,9 +150,17 @@ async function passthrough(request: Request): Promise<Response> {
   }
 }
 
+const IDLE_TIMEOUT = 0
+
 const server = Bun.serve({
   hostname: HOST,
   port: PORT,
+  // Bun.serve defaults idleTimeout to 10s, and that timer keeps running while a
+  // response is streaming, so any pause longer than that between chunks resets the
+  // client's connection in the middle of an answer. Generation pauses on a local
+  // model are unbounded and Bun caps idleTimeout at 255s, so disable it. Upstream
+  // lifetime stays tied to the client connection through request.signal.
+  idleTimeout: IDLE_TIMEOUT,
   fetch(request) {
     const url = new URL(request.url)
 
@@ -163,6 +171,7 @@ const server = Bun.serve({
           service: SERVICE,
           pid: process.pid,
           upstream: OLLAMA_URL,
+          idleTimeout: IDLE_TIMEOUT,
         })
       }
 

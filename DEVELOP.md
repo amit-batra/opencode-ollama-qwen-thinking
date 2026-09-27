@@ -6,7 +6,7 @@ This file contains maintainer/developer instructions that are intentionally kept
 
 - A GitHub account with write access to this repository.
 - An npm account with permission to publish the package.
-- Bun 1.1.0 or later.
+- Bun 1.1.26 or later.
 - Node.js 22.14.0 or later.
 - Git.
 
@@ -23,6 +23,12 @@ Run the test suite:
 ```bash
 bun test
 ```
+
+`tests/proxy.test.ts` spawns the real proxy as a child process alongside a fake Ollama
+upstream, on ports `31537` and `31538`. Two of its cases deliberately idle for longer than
+10 seconds, so a full run takes roughly 25 seconds. Those two cases are the regression
+guard for the proxy's `idleTimeout`; if you change the `Bun.serve` options in
+`src/proxy.ts`, confirm they still fail when `idleTimeout: 0` is removed.
 
 Run the proxy directly during development:
 
@@ -51,7 +57,7 @@ npm pack
 This produces a file such as:
 
 ```text
-opencode-ollama-qwen-thinking-0.1.0.tgz
+opencode-ollama-qwen-thinking-0.1.2.tgz
 ```
 
 Do not commit the generated `.tgz` file.
@@ -167,7 +173,7 @@ The preferred user-facing installation is through OpenCode's npm plugin support:
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-ollama-qwen-thinking@0.1.0"
+    "opencode-ollama-qwen-thinking@0.1.2"
   ]
 }
 ```

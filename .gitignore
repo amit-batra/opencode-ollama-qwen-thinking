@@ -2,3 +2,6 @@ node_modules/
 .DS_Store
 .env
 *.log
+
+# Local implementation plans; working documents, not part of the published repo.
+docs/plans/
