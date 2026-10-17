@@ -7,7 +7,7 @@ type Effort = (typeof EFFORTS)[number]
 
 type JsonObject = Record<string, unknown>
 
-function usage(): never {
+function usage(exitCode: 0 | 1 = 0): never {
   console.error(`
 Usage:
   bun run scripts/generate-qwen-variants.ts --input <opencode.json> [options]
@@ -28,11 +28,13 @@ Examples:
   bun run scripts/generate-qwen-variants.ts \
     --input ./opencode.json \
     --output ./opencode-qwen-thinking.json \
-    --model qwen3.8:27b-mlx
+    --model qwen3.8:27b
 
   bun run scripts/generate-qwen-variants.ts \
     --input ./opencode.json --in-place --force
 `)
+
+  process.exit(exitCode)
 }
 
 function parseArgs(argv: string[]) {
@@ -84,7 +86,7 @@ const inPlace = args["in-place"] === true
 
 if (!input) {
   console.error("Error: --input is required.")
-  usage()
+  usage(1)
 }
 
 if (inPlace && args.output) {
