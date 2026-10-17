@@ -4,16 +4,16 @@ import { decodeModel, isQwen38, rewriteRequest, variantModels } from "../src/rea
 describe("decodeModel", () => {
   test("decodes all supported effort levels", () => {
     for (const effort of ["none", "low", "medium", "xhigh"]) {
-      expect(decodeModel(`qwen3.8:27b-mlx-effort-${effort}`)).toEqual({
-        upstreamModel: "qwen3.8:27b-mlx",
+      expect(decodeModel(`qwen3.8:27b-effort-${effort}`)).toEqual({
+        upstreamModel: "qwen3.8:27b",
         reasoningEffort: effort,
       })
     }
   })
 
   test("leaves ordinary model IDs untouched", () => {
-    expect(decodeModel("qwen3.8:27b-mlx")).toEqual({
-      upstreamModel: "qwen3.8:27b-mlx",
+    expect(decodeModel("qwen3.8:27b")).toEqual({
+      upstreamModel: "qwen3.8:27b",
     })
   })
 })
@@ -21,11 +21,11 @@ describe("decodeModel", () => {
 describe("rewriteRequest", () => {
   test("rewrites a Qwen3.8 reasoning variant", () => {
     expect(rewriteRequest({
-      model: "qwen3.8:27b-mlx-effort-medium",
+      model: "qwen3.8:27b-effort-medium",
       messages: [],
       stream: true,
     })).toEqual({
-      model: "qwen3.8:27b-mlx",
+      model: "qwen3.8:27b",
       messages: [],
       stream: true,
       reasoning_effort: "medium",
@@ -39,6 +39,6 @@ describe("rewriteRequest", () => {
 })
 
 test("variantModels", () => {
-  expect(variantModels("qwen3.8:27b-mlx")).toHaveLength(4)
-  expect(isQwen38("qwen3.8:27b-mlx")).toBe(true)
+  expect(variantModels("qwen3.8:27b")).toHaveLength(4)
+  expect(isQwen38("qwen3.8:27b")).toBe(true)
 })

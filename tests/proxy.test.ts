@@ -61,7 +61,7 @@ beforeAll(async () => {
       if (url.pathname === "/v1/models") {
         return Response.json({
           object: "list",
-          data: [{ id: "qwen3.8:27b-mlx", object: "model", owned_by: "library" }],
+          data: [{ id: "qwen3.8:27b", object: "model", owned_by: "library" }],
         })
       }
 
@@ -141,7 +141,7 @@ test("rewrites the effort suffix before forwarding upstream", async () => {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: "qwen3.8:27b-mlx-effort-medium",
+      model: "qwen3.8:27b-effort-medium",
       messages: [],
       stream: false,
     }),
@@ -151,7 +151,7 @@ test("rewrites the effort suffix before forwarding upstream", async () => {
   await response.text()
 
   expect(upstream.lastBody()).toMatchObject({
-    model: "qwen3.8:27b-mlx",
+    model: "qwen3.8:27b",
     reasoning_effort: "medium",
   })
 })
@@ -161,7 +161,7 @@ test("streams a response through a gap longer than the default 10s idle timeout"
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      model: "qwen3.8:27b-mlx-effort-low",
+      model: "qwen3.8:27b-effort-low",
       messages: [],
       stream: true,
     }),
@@ -227,13 +227,13 @@ test("keeps an idle keep-alive socket usable for a second request", SLOW, async 
   })
 
   try {
-    sendRequest("qwen3.8:27b-mlx-effort-low")
+    sendRequest("qwen3.8:27b-effort-low")
     expect(await readResponse()).toStartWith("HTTP/1.1 200")
 
     // Without idleTimeout disabled the proxy closes this socket first.
     await Bun.sleep(IDLE_SOCKET_MS)
 
-    sendRequest("qwen3.8:27b-mlx-effort-high")
+    sendRequest("qwen3.8:27b-effort-high")
     expect(await readResponse()).toStartWith("HTTP/1.1 200")
   } finally {
     socket.destroy()
