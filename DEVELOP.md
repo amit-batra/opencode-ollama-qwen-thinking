@@ -57,7 +57,7 @@ npm pack
 This produces a file such as:
 
 ```text
-opencode-ollama-qwen-thinking-0.1.2.tgz
+opencode-ollama-qwen-thinking-0.1.3.tgz
 ```
 
 Do not commit the generated `.tgz` file.
@@ -181,7 +181,7 @@ The preferred user-facing installation is through OpenCode's npm plugin support:
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-ollama-qwen-thinking@0.1.2"
+    "opencode-ollama-qwen-thinking@0.1.3"
   ]
 }
 ```

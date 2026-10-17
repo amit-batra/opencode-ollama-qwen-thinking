@@ -118,7 +118,7 @@ Once published, the easiest installation is to add the package directly to your 
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-ollama-qwen-thinking@0.1.2"
+    "opencode-ollama-qwen-thinking@0.1.3"
   ]
 }
 ```
