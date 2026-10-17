@@ -11,6 +11,8 @@
     "test": "bun test",
     "proxy": "bun run src/proxy.ts",
     "generate:variants": "bun run scripts/generate-qwen-variants.ts",
+    "sync:version": "bun run scripts/sync-version.ts",
+    "version": "bun run sync:version",
     "prepublishOnly": "bun test"
   },
   "devDependencies": {

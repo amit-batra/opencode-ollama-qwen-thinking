@@ -146,6 +146,14 @@ npm version minor
 npm version major
 ```
 
+The `version` lifecycle script runs `bun run sync:version`, which rewrites the version pinned in the OpenCode install snippets (`opencode-ollama-qwen-thinking@<version>`) in `README.md` and `DEVELOP.md` and stages those files. Because it runs inside `npm version`, the doc updates are part of the same commit and tag. Historical version references, such as the release note that first fixed a bug, are left untouched.
+
+Run it on its own to check or repair the references without bumping:
+
+```bash
+bun run sync:version
+```
+
 3. Push the commit and tag:
 
 ```bash
