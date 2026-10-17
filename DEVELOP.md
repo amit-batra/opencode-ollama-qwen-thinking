@@ -111,7 +111,7 @@ After `0.1.0` exists on npm:
 The repository's `package.json` already has the required repository URL:
 
 ```text
-https://github.com/amit-batra/opencode-ollama-qwen-thinking.git
+git+https://github.com/amit-batra/opencode-ollama-qwen-thinking.git
 ```
 
 npm requires that repository URL to match the GitHub repository used for trusted publishing.

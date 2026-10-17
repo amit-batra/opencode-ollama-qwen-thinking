@@ -25,7 +25,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amit-batra/opencode-ollama-qwen-thinking.git"
+    "url": "git+https://github.com/amit-batra/opencode-ollama-qwen-thinking.git"
   },
   "files": [
     "src",
